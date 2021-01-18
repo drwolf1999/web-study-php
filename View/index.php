@@ -1,5 +1,24 @@
 <?php require ("top.php") ?>
 
+<div class="row valign-wrapper right-align">
+    <div class="col s10 pull-s1 m6 pull-m3 l4 pull-l4">
+        <form>
+            <label>
+                <input type="radio" name="mode" class="with-gap" checked value="-1" />
+                <span>전체</span>
+            </label>
+            <label>
+                <input type="radio" name="mode" class="with-gap" value="1" />
+                <span>한 일</span>
+            </label>
+            <label>
+                <input type="radio" name="mode" class="with-gap" value="0" />
+                <span>안 끝난 일</span>
+            </label>
+        </form>
+    </div>
+</div>
+
 <div id="todo-list"></div>
 
 <div id="todo-add-form">
@@ -7,8 +26,11 @@
         <div class="col s10 pull-s1 m6 pull-m3 l4 pull-l4">
             <div class="card darken-1">
                 <div class="card-content">
-                    <span class="card-title"><input type="text" placeholder="할 일" id="add-title"></span>
-                    <p><textarea class="materialize-textarea" placeholder="상세내용" id="add-description"></textarea></p>
+                    <span class="card-title"><input type="text" placeholder="할 일" id="add-title" /></span>
+                    <p>
+                        <label for="add-description">내용</label>
+                        <textarea class="materialize-textarea" placeholder="상세내용" id="add-description"></textarea>
+                    </p>
                 </div>
                 <div class="card-action">
                     <a href="javascript:void(0)" id="reset">초기화</a>
@@ -28,7 +50,10 @@
     function getTodoList() {
         $.ajax({
             url: 'getTodos.php',
-            type: 'get',
+            type: 'GET',
+            data: {
+                'do': MODE(),
+            },
             dataType: 'json',
             success: function (data) {
                 let title, description, isDo, id;
@@ -135,6 +160,26 @@
         $('#add-title').val('');
         $('#add-description').val('');
     }
+
+    function MODE() {
+        return parseInt($('input[name=mode]:checked').val());
+    }
+
+    $('input[name=mode]').change(function () {
+        let checkedVal = MODE();
+        let do_todo_div = $('#todo-list');
+        let end_do_todo_div = $('#end-todo-list');
+        if (checkedVal === -1) {
+            do_todo_div.attr('hidden', false);
+            end_do_todo_div.attr('hidden', false);
+        } else if (checkedVal === 0) { // undo
+            do_todo_div.attr('hidden', false);
+            end_do_todo_div.attr('hidden', true);
+        } else { // do
+            do_todo_div.attr('hidden', true);
+            end_do_todo_div.attr('hidden', false);
+        }
+    });
 </script>
 
 <?php require ("bottom.php") ?>

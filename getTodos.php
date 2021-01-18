@@ -5,6 +5,10 @@ header("Content-Type: application/json");
 
 $sql = "SELECT * FROM todos";
 
+if (isset($_GET['do']) and intval($_GET['id']) == -1) {
+    $sql .= " WHERE `do` = ".$_GET['do'];
+}
+
 $todos = pdo_query($sql);
 
 $ids = array();
